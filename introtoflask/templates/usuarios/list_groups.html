@@ -20,11 +20,19 @@
         <i class="icon-remove" id="{{usuario.id}}" title="Eliminar {{usuario.id}}"></i>
       </td> 
       <td>
+      
+      {% set nombres = [] %}
+      {%for grupo in grupos%}
+        {%if grupo.id in usuario.grupo_id%}
+          {%do nombres.append((grupo.id,grupo.nombre))%}
+        {%endif%}
+      {%endfor%}
 
-      {% for grupo in usuario.grupos %}
-        <a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{grupo.nombre|truncate(100)}}</a>
-        <i class="icon-remove" id="{{grupo.id}}" title="Eliminar {{grupo.id}}"></i>
-        <br>
+      {% for id,nombre in nombres %}
+        <label class="label">
+          <a style="color:white" href="{{ url_for('get_grouplist', group=nombre) }}">{{nombre|truncate(100)}}</a>
+          <i class="icon-remove" id="{{id}}" title="Eliminar {{id}}"></i>
+        </label>
       {% endfor %} 
       
       </td> 

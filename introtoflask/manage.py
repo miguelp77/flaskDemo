@@ -152,7 +152,8 @@ def get_details(slug):
 	grupos = list(Grupo.objects.all())
 	perfil =your_perfil([int(usuarios[0].perfil)])
 	login = current_user
-	return render_template('usuarios/details.html', slug=slug, login =login , usuarios=usuarios, perfiles=perfil, grupos=grupos)
+	size = getGroupSize()
+	return render_template('usuarios/details.html', slug=slug, login =login , usuarios=usuarios, perfiles=perfil, grupos=grupos, size=size)
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -242,13 +243,23 @@ def get_grouplist(group):
 	g = Grupo.objects.get(nombre=group)
 	# usuarios = list(Usuario.objects(grupos__nombre=group))
 	usuarios = list(Usuario.objects(grupo_id=g.id))
+	grupos = Grupo.objects.all()
 	# print usuarios.to_json()	
 	# return slug
 	# print usuarios
 	# print group
-	return render_template('usuarios/list_groups.html', group=group, usuarios=usuarios)
+	
+	return render_template('usuarios/list_groups.html', group=group, usuarios=usuarios, grupos=grupos)
 	# return render_template('usuarios/list_groups.html', usuarios=usuarios)
 
+def getGroupSize():
+	grupos = Grupo.objects.all()
+	size = {}
+	for grupo in grupos:
+		usuarios = list(Usuario.objects(grupo_id=grupo.id))
+		count = len(usuarios)
+		size[grupo.nombre]=count
+	return size
 
 def get_context():
 	usuario = Usuario.objects.get_or_404()

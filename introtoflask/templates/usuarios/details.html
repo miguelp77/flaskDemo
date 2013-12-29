@@ -59,7 +59,7 @@
           {%if grupo.id in usuario.grupo_id%}
           <label class="checkbox">
             <input type="checkbox" disabled="True" valor="{{ grupo.id }}">
-            <span class="span1"><a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{ grupo.nombre }}</a></span>
+            <span class="span1"><span class="label label-info" title="{{size[grupo.nombre]}} alumnos apuntados">{{size[grupo.nombre]}}</span> <a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{ grupo.nombre }}</a> </span>
             <span class="span2">{{  grupo.horario }}</span>
           </label>
           {%else%}

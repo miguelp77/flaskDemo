@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+  <h2>Demo</h2>
+    {{usuarios.grupos}}
+    {# {{}} #}
+{%for id in usuarios.grupo_id%}
+    <br>
+    {{id}}
+    {# {{usuario.grupos_id}} #}
+{%endfor%}
+{%for grupo in grupos%}
+    <br>
+     >> {{grupo.nombre}} : {{grupo.horario}}
+    {# {{usuario.grupos_id}} #}
+{%endfor%}
+{%for grupo in usuarios.grupos%}
+    <br>
+     >> {{grupo.nombre}} : {{grupo.horario}}
+    {# {{usuario.grupos_id}} #}
+{%endfor%}
+    <br>
+
+    {% set respuesta = ''%}
+{{respuesta}} 
+{%for respuesta in cuestion.respuesta%}
+    <br>
+     >> {{respuesta.texto}} : {{respuesta.valor}}
+    {# {{usuario.grupos_id}} #}
+{%endfor%}
+
+
+{{respuesta.valor}} - 
+{{respuesta.texto}}
+
+
+
+{% endblock %} 

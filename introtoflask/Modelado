@@ -1,0 +1,24 @@
+Modelado
+
+Usuario
+	nombre
+	apellido
+	username
+	password
+	perfil
+
+Cuestiones
+	Nombre
+	Asignatura
+	Enunciado
+	Respuestas
+
+Valores
+	Opcion
+	valores
+
+
+Respuestas
+	cuestion_id
+	texto
+	valor

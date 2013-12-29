@@ -1,0 +1,125 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h2>Detalles del usuario</h2>
+  <hr>
+    {% set usuario = usuarios[0]%}
+    {# {% for usuario in usuarios |sort(case_sensitive=False) %} #}
+      {% if usuario.nombre.lower() == slug.lower() %}
+      <h3>{{ usuario.nombre }} {{ usuario.apellido}}</h3>
+      <hr/>
+{#       <span class="span3">
+        {{ usuario.apellido|truncate(100) }}, {{ usuario.nombre|truncate(100) }} | {{ usuario.created_at.strftime('%H:%M %Y-%m-%d') }}
+      </span>
+ #}   
+      <div class="span5">
+      <p><b>Datos del usuario</b></p>
+      <span class="span2">Nombre de usuario:</span>
+      <span class="span2">{{ usuario.username}}</span>
+      <span class="span2">Contraseña:</span>
+      <span class="span2">{{ usuario.password }}</span>
+      <span class="span2">Perfil:</span>
+      <span class="span2">{{ perfiles }}</span>
+        {% if login.perfil == '3' %}
+           <a class="span2" href="{{ url_for('edit_contact', username= usuario.username) }}"><button class="btn">Editar {{ usuario.nombre }}</button></a>
+        {% endif%}
+      </div>   
+      {% set nombres = [] %}
+      {%for grupo in grupos%}
+        {%if grupo.id in usuario.grupo_id%}
+          {# [{{grupo.id}} --> {{usuario.grupo_id}}] #}
+          {%do nombres.append((grupo.id,grupo.nombre))%}
+        {%endif%}
+      {%endfor%}
+      <div class="span3">
+
+      {% if usuario.grupo_id %}
+        <ul>
+          <p><b>Grupos: </b></p>
+          {%for id,grupo in nombres %}
+{#           <label><a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{ grupo.nombre }}</a> - {{ grupo.horario }}      
+            <i class="icon-remove" id="{{usuario.id}}" title="Quitar {{grupo.nombre}}"></i>
+            {% do ides.append(grupo.id) %}
+          </label> #}
+        <label class="label">
+          {# {%if grupo in nombres%} #}
+          {{ grupo }}
+          {# {%endif%} #}
+        <i class="icon-remove" grupo="{{id}}" id="{{usuario.id}}" title="Quitar {{grupo}}"></i>
+
+        </label>
+        {%endfor%}
+      </ul>
+      {%endif%}
+      {% endif %}
+
+      </div>
+      <div class="span4">        
+        {%for grupo in grupos|sort(attribute='nombre')%}
+          {%if grupo.id in usuario.grupo_id%}
+          <label class="checkbox">
+            <input type="checkbox" disabled="True" valor="{{ grupo.id }}">
+            <span class="span1"><a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{ grupo.nombre }}</a></span>
+            <span class="span2">{{  grupo.horario }}</span>
+          </label>
+          {%else%}
+          <label class="checkbox">
+            {# <input type="checkbox" checked="True" valor="{{ grupo.id }}"> #}
+            <input type="checkbox" valor="{{ grupo.id }}">
+            <span class="span1"><a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{ grupo.nombre }}</a></span>
+            <span class="span2">{{  grupo.horario }}</span>
+          </label>
+
+          {%endif%}
+
+        {%endfor%}
+      </select>
+      <br/>
+        <a class="add_group span2" href="#" user="{{usuario.id}}"><button class="btn">Añadir</button></a>
+      </div>
+    {# {% endfor %} #}
+
+  <script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
+  $(function() {
+    $('i.icon-remove').bind('click', function() {
+      usuario = $(this).parent()
+      r = confirm('Se va a eliminar')
+      if(r){
+          grupo_id = $(this).attr('grupo')
+          
+          // nombre = nombre.split(' ').pop();
+        $.ajax({
+          type: "GET",
+          url:$SCRIPT_ROOT + "/_removeGroup", 
+          data: { u: $(this).attr('id'), g: grupo_id}
+        })
+       .done(function(){
+            window.location.reload();
+        }) 
+      }
+      return false;
+    });
+    $('a.add_group').bind('click', function() {
+      var usuario = $(this).attr('user')
+      var grupos = []
+      var groups     
+      $("input[type=checkbox]:checked").each(function() {
+        grupos.push($(this).attr("valor"))
+      })
+      groups = grupos.join(",")
+        $.ajax({
+          type: "GET",
+          url:$SCRIPT_ROOT + "/_addGroupToUser", 
+          data: { u: usuario, g: groups}, 
+        })
+        .done(function(){
+            window.location.reload();
+        })
+      return false;
+    });
+
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <h2>Usuarios del grupo {{group}}</h2>
+  <hr>
+  <p>Listado de usuarios pertenecientes al grupo {{group}} ordenados por apellido.</p>
+
+  <table class="table">
+  <tr>
+    <td>Apellido</td>
+    <td>Nombre</td>
+    <td>Nombre de usuario</td>
+    <td>Grupos <a href="{{ url_for('list_group') }}"><i class="icon-th" title="Todos los grupos"></i></a></td>
+  </tr>
+  {% for usuario in usuarios | sort(attribute='apellido') %}
+    <tr>
+      <td><a href="{{ url_for('get_details', slug=usuario.nombre) }}">{{ usuario.apellido|truncate(100) }}</a></td>
+      <td>{{usuario.nombre|truncate(100)}}</td> 
+      <td>{{usuario.username|truncate(100)}}
+        <i class="icon-remove" id="{{usuario.id}}" title="Eliminar {{usuario.id}}"></i>
+      </td> 
+      <td>
+
+      {% for grupo in usuario.grupos %}
+        <a href="{{ url_for('get_grouplist', group=grupo.nombre) }}">{{grupo.nombre|truncate(100)}}</a>
+        <i class="icon-remove" id="{{grupo.id}}" title="Eliminar {{grupo.id}}"></i>
+        <br>
+      {% endfor %} 
+      
+      </td> 
+    </tr>
+
+      {# <i class="icon-remove" id="{{grupo.id}}" title="Eliminar {{slug}}"></i>  #}
+      {# <i class="icon-list" id="{{usuario.id}}" title="Grupos"></i></p> #}
+        {# {{ usuario.password|truncate(100) }}</p> #}  
+{#         {% with total=usuario.comments|length %}
+            {{ total }} comment {%- if total > 1 %}s{%- endif -%}
+        {% endwith %} #}
+        {# {% endif %} #}
+    {% endfor %}
+  </table>
+
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  $(function() {
+    $('i.icon-remove').bind('click', function() {
+      usuario = $(this).parent()
+      r = confirm('Se va a eliminar')
+      if(r){
+          nombre = $(this).attr('title')
+          nombre = nombre.split(' ').pop();
+        $.getJSON($SCRIPT_ROOT + '/_removeGroup', {
+          a: $(this).attr('id'),
+          b: nombre,
+          // b: $('input[name="b"]').val()
+        }, function(data) {
+          // $("p#result").css('color','red');
+          // $("p#result").text(data.username);
+          usuario.hide()
+        });
+      }
+      return false;
+    });
+  });
+
+</script>
+{% endblock %}

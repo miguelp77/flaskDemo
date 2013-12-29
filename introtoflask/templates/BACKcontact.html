@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+  <h2>Registro de usuarios</h2>
+  
+{#   {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %} #}
+  {% for message in form.name.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+     {{ forms.render(form) }}
+{#   {% for message in form.email.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+ 
+  {% for message in form.subject.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+ 
+  {% for message in form.message.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+ #}  
+  <h1>{{ action }} {{ data_type }}</h1>
+ {# <form action="{{ url_for('contact') }}" method=post> #}
+ <form action="{{ form_action }}" method=post>
+  {# <form action="." method=post> #}
+    {{ form.hidden_tag() }}
+ 
+    {{ form.nombre.label }}
+    {{ form.nombre }}
+
+    {{ form.lastname.label }}
+    {{ form.lastname }}
+ 
+    {{ form.username.label }}
+    {{ form.username }}
+ 
+    {{ form.password.label }}
+    {{ form.password }}
+
+    {{ form.perfil.label }}
+    {{ form.perfil }}
+{#     {{ form.message.label }}
+    {{ form.message }} #}
+    <br />
+    {{form.grupo.label}}
+    {{form.grupo}}
+{#     <select id="groups" name="grupos">
+    {% for grupo in grupos %}
+    <option value={{ grupo }}>{{ grupo }}</option>    
+    {% endfor %}
+    </select> #}
+    {{ form.submit }}
+  </form>
+{% endblock %} 

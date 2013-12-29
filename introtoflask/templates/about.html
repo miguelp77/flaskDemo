@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+  
+{% block content %}
+  <h2>Sobre</h2>
+  <hr>
+	{% if not current_user.is_authenticated() %}
+		<p>No ha iniciado sesión.</p>
+	{% else %}
+  		<p>Esta logado como <b>{{current_user.username}}</b></p>
+	{% endif %}
+  <p>Esta aplicación ha sido realizada por BlaBlaBla para la BlaBla.</p>
+{% endblock %}

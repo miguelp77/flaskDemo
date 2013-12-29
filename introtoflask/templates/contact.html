@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+  <h2>Registro de usuarios</h2>
+{% if form.errors %}
+    <ul class="errors">
+        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+            {% for error in field_errors %}
+                <li>{{ form[field_name].label }}: {{ error }} -- {{form[field_name].data}}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
+  {% for message in form.errors %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+
+  <h1>{{ action }} {{ data_type }}</h1>
+ {# <form action="{{ url_for('contact') }}" method=post> #}
+ <form action="{{ form_action }}" method=post>
+  {# <form action="." method=post> #}
+    {{ form.hidden_tag() }}
+ 
+    {{ form.nombre.label }}
+    {{ form.nombre }}
+
+    {{ form.apellido.label }}
+    {{ form.apellido }}
+ 
+    {{ form.username.label }}
+    {{ form.username }}
+ 
+    {{ form.password.label }}
+    {{ form.password }}
+
+    {{ form.perfil.label }}
+    {{ form.perfil }}
+{#     {{ form.message.label }}
+    {{ form.message }} #}
+    <hr />
+
+{#     <select id="groups" name="grupos">
+    {% for grupo in grupos %}
+    <option value={{ grupo }}>{{ grupo }}</option>    
+    {% endfor %}
+    </select> #}
+    {{ form.submit }}
+  </form>
+{% endblock %} 

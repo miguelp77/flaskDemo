@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+ 
+{% block content %}
+  <h2>DEMO::Cuestion</h2>
+
+    <div id="cuestion" style="border:1px solid red" class="span10">
+        <span style="border:1px solid green;font-size:20px;" class="span9">
+            {{cuestion.texto}}
+        </span>
+    {# {{}} #}
+    {% if cuestion.imagen %}
+    <div id="span6" style="border:1px solid green;font-size:20px;">
+        <span class="span6" style="border:1px solid blue;margin-top:14px;">
+            <img src="{{cuestion.imagen}}" alt="">
+        <label style="margin-top:14px;" class="label label-info">
+            fig. {{cuestion.id}}.1
+        </label>
+        </span>
+    </div>
+    {%endif%}
+
+{%for respuesta in cuestion.respuesta%}
+
+    <ul class="span6 respuestas" style="margin-top:18px;">
+    <li class="span6" style="list-style-type:none;">
+    <div class="input-group">
+        <div class="input-group-addon">
+            <input type="radio" name="{{cuestion.id}}" class="radio" value="{{respuesta.mas_id}}">
+            {{respuesta.mas_id}} {{respuesta.texto}} : {{respuesta.valor}} : {{cuestion.id}} 
+        </div>
+    </div>
+    </li>
+    </ul>
+    {# {{usuario.grupos_id}} #}
+{%endfor%}
+
+
+{# {{respuesta.valor}}  
+{{respuesta.texto}}
+ #}
+<br>
+        <span style="border:1px solid green" class="span2 right">  
+            Creada por: <b>{{usuarios.nombre}}</b>
+        </span>
+
+    </div>
+<script>
+
+(function($){
+    $.fn.shuffle = function() {
+        var allElems = this.get(),
+            getRandom = function(max) {
+                return Math.floor(Math.random() * max);
+            },
+            shuffled = $.map(allElems, function(){
+                var random = getRandom(allElems.length),
+                    randEl = $(allElems[random]).clone(true)[0];
+                allElems.splice(random, 1);
+                return randEl;
+            });
+ 
+        this.each(function(i){
+            $(this).replaceWith($(shuffled[i]));
+        });
+ 
+        return $(shuffled);
+    };
+})(jQuery);
+
+$('ul.respuestas').shuffle();
+var respuesta = []
+$("input[type=radio]:selected").each(function() {
+    // respuesta.push([$(this).attr("name"):$(this).attr("value")])
+    data={name:$(this).attr("name"),
+        select:$(this).attr("value")
+        }
+    respuesta.append(data)
+})
+JSON.stringify(respuesta)
+console.log(respuesta)
+</script>
+{% endblock %} 

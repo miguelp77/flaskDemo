@@ -14,57 +14,42 @@ from mongoengine import *
 
 main_operations = Blueprint('main_operations', __name__, template_folder='templates')
 
- 
 @app.route('/')
 def home():
+	"""Page HOME
+	Pagina de inicio
+	"""
 	user = current_user
 	return render_template('home.html',user=user)
 
 @app.route('/about')
 def about():
+	"""Page ABOUT 
+	Pagina donde daremos detalles de contacto del adminstrador de la aplicación y del usuario logado
+	"""
 	return render_template('about.html')
-
 
 @app.route('/_ajax')
 def devuelvo():
+	"""Demo AJAX 
+	Como actuar con una llamada GET de Ajax"""
 	user_id = request.args.get('a')
 	user =Usuario.objects.get(id=user_id).to_json()
-	# print(user.__dict__)
 	b=json_util.dumps(user)
-	# b= user.username
-	# user.delete()
 	return user
-	# return jsonify(result= b)
-	# return jsonify(result= b)
 
 @app.route('/_addGroup')
 def addGroup():
+	""" Pendiente de terminar
+	Incluir como añadir un grupo a una asignatura"""
 	user_id = request.args.get('a')
 	usuario =Usuario.objects.get(id=user_id).to_json()
-	# grupo=Grupo(nombre="test1",horario="L-M  10:00-12:00")
-	# usuario.grupos.update_one(push__grupos=grupo)
-	
-	# user = Usuario.objects.get(id=user_id)
-	# if uniqueName(user_id,"test1"):
-	# 	user.update(push__grupos=grupo)
-	# 	user.save()
-
-	# Eliminar un grupo con update y pull
-	# Usuario.objects.get(id=user_id).update(pull__grupos__nombre='test1')
-	# gs = Usuario.objects(Q(grupos__nombre__exists=True))[:1]
-	# gs = []
-	# for u in Usuario.objects(Q(grupos__exists=True)):
-	# 	g = u.grupos[0].nombre
-	# 	if not (g in gs):
-	# 		gs.append(g)
-	
-	# print ', '.join(gs)
-	# return ', '.join(gs)
-	# return usuario
 
 @app.route('/_addGroupToUser')
 def addGroupToUser():
-	print "OOOO"
+	"""Añadir un grupo a un usuario
+	Atiende a la llamada AJAX con la que se añade un grupo a un usuario
+	"""
 	user = request.args.get('u')
 	groups = request.args.get('g')
 	if len(groups) > 1:
@@ -79,26 +64,18 @@ def addGroupToUser():
 
 @app.route('/_removeGroup')
 def removeGroup():
+	"""Eliminar un grupo a un usuario
+	Atiende a la llamada AJAX con la que se elimina un grupo a un usuario
+	"""
 	user_id = request.args.get('u')
 	grupo_id = request.args.get('g')
-	# usuario =Usuario.objects.get(id=user_id).to_json()
-	# grupo=Grupo(nombre="test3",horario="L-M  10:00-12:00")
-	# usuario.grupos.update_one(push__grupos=grupo)
-	
-	# user = Usuario.objects.get(id=user_id)
-	# if uniqueName(user_id,"test3"):
-	# 	user.update(push__grupos=grupo)
-	# 	user.save()
-	
-	# Eliminar un grupo con update y pull
 	usuario = Usuario.objects.get(id=user_id).update(pull__grupos__id=grupo_id)
-
-	return "Removed"
-
-# def listGroups():
-
+	return "200"
 
 def uniqueName(user_id,name):
+	"""REVISAR  Unico nombre
+	unico nombre. Posiblemente se pueda eliminar
+	"""	
 	grupo = Usuario.objects(id=user_id, grupos__nombre__iexact=nombre)
 	# grupo = Grupo.objects.get(nombre__iexact=name)
 	if len(grupo) > 0:

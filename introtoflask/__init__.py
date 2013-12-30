@@ -35,6 +35,7 @@ app.debug=True
 db = MongoEngine(app)
 # tool = DebugToolbarExtension(app)
 
+
 principals = Principal(app)
 normal_role = RoleNeed('normal')
 normal_permission = Permission(normal_role)
@@ -59,8 +60,10 @@ def register_blueprints(app):
     # Prevents circular imports
     from introtoflask.manage import usuarios
     from introtoflask.main_ops import main_operations
+    from introtoflask.preguntas_ops import preguntas_ops
     app.register_blueprint(usuarios)
     app.register_blueprint(main_operations)
+    app.register_blueprint(preguntas_ops)
 
 register_blueprints(app)
 

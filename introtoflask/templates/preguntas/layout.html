@@ -1,65 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplicación</title>
 <link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiIKKCYiWgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiIgKCYiuygmIhgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiJDKCYi7SgmIlIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiJzKCYi/SgmIqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgmIgooJiKmKCYi/ygmIuAoJiIOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgmIh8oJiLPKCYi/ygmIv4oJiI/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgmIkEoJiLrKCYi/ygmIv8oJiKMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgmInAoJiL8KCYi/ygmIv8oJiL/KCYiySgmIpwoJiJzKCYiKQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgmIhYoJiJyKCYinCgmIsIoJiL8KCYi/ygmIv8oJiL/KCYinygmIgkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiJTKCYi/ygmIv8oJiL5KCYiaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiIeKCYi7ygmIv8oJiLjKCYiNwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoJiIDKCYixCgmIv8oJiK+KCYiFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKCYigigmIv8oJiKJKCYiAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKCYiPigmIvAoJiJSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKCYiEigmIrooJiInAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgmIlooJiIMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP/3AAD/7wAA/88AAP8fAAD+PwAA/D8AAPgfAAD4DwAA/j8AAPx/AAD4/wAA8f8AAPf/AADv/wAA//8AAA==" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">;
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery.js"></script>
-  <!--  
 
-  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js">
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX", "output/HTML-CSS"],
-    tex2jax: {
-      skipTags: ["script","noscript","style","textarea","pre","code"],
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-      processEscapes: true
-    },
-    "HTML-CSS": { availableFonts: ["TeX"] }
-  });
-  </script>
-   
-  <script type="text/javascript"
-     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js">
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-    </script>
--->
-<script type="text/x-mathjax-config">
-  //
-  //  The document is hidden until MathJax is finished, then
-  //   this function runs, making it visible again.
-  //
-  MathJax.Hub.Queue(function () {
-    document.getElementById("hide_page").style.visibility = "";
-  });
-</script>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full"></script>
-
-
-
-  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>  
   </head>
   <body>
   <header>
     <div class="container">
-      <h1 class="logo">Aplicación</h1>
+      <h1 class="logo">Aplicación > Preguntas</h1>
       <strong><nav>
         <ul class="menu">
-          <li><a href="{{ url_for('home') }}">Inicio</a></li>
-          <li><a href="{{ url_for('about') }}">Sobre</a></li>
-          {%if not current_user.is_authenticated()%}
-             <li><a href="{{ url_for('login') }}">Acceso</a></li>
-          {% else %}
-            <li><a href="{{ url_for('contact') }}">Registro</a></li>
-            <li><a href="{{ url_for('list_users') }}">Usuarios</a></li>
-            <li><a href="{{ url_for('list_group') }}">Grupos</a></li>
-            <li><a href="{{ url_for('logout') }}">Desconectar</a></li>
-          {% endif %}
+         <li><a href="{{ url_for('home') }}">Inicio</a></li>
+         <li><a href="{{ url_for('about') }}">Sobre</a></li>
+         <li><a href="{{ url_for('contact') }}">Registro</a></li>
+         <li><a href="{{ url_for('login') }}">Acceso</a></li>
         </ul>
       </nav></strong>
     </div>
@@ -69,6 +28,6 @@
       {% block content %}
       {% endblock %}
     </div>
-
+     
   </body>
 </html>

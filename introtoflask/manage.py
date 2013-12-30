@@ -20,8 +20,6 @@ from werkzeug.datastructures import MultiDict
 
 usuarios = Blueprint('usuarios', __name__, template_folder='templates')
 
-
-
 normal_role = RoleNeed(u'normal')
 normal_permission = Permission(normal_role)
 admin_role = RoleNeed(u'Administrador')
@@ -31,11 +29,13 @@ admin_permission = Permission(admin_role)
 
 @app.before_request
 def log_request():
+	"""Aux de loggin"""
 	if current_app.config.get('LOG_REQUESTS'):
 		current_app.logger.debug('whatever')
 
 @lm.user_loader
 def load_user(id):
+	"""Devuelve el usuario logado"""
 	# print (">>>>>>>>load user = ",Usuario.objects(id=id))
 	return Usuario.objects.get(id=id)
 
@@ -122,21 +122,6 @@ def demo():
 	# usuarios = Usuario.objects.all()
 	grupos = [('nombre','eeeee'),('horario','eeeee')]
 	usuario = Usuario.objects.get(username='usuario')
-	# usuario.update(add_to_set__grupo_id=["test4"])  # Add an element
-	# usuario.update(pull__grupo_id="Test")  # Delete an element
-	# usuario.update(pull__grupo_id="Test1")  # Delete an element
-	# usuario.update(set__grupo_id=["test3"])  # Just one element
-	# usuario.grupo_id("Test3")  # Update
-	# usuario.save()
-	# usuario.reload()
-	# grupo = Grupo.objects.get(nombre='test0')
-	# usuario.update(pull__grupos=grupo)
-	# usuario.update(add_to_set__grupos=[grupo])
-	# usuario.reload()
-	# for grupo in usuario.grupo_id:
-	# 	grupo = Grupo.objects.get(nombre=grupo)
-	# 	grupos.append(grupo)
-
 	respuesta = Respuesta(texto='respuesta de prueba',valor=-33)
 	respuesta2 = Respuesta(texto='respuesta de prueba 2',valor=100)
 	cuestion = Cuestion(texto='texto del enunciado de prueba',respuesta=[respuesta,respuesta2],conceptos=['demo'])

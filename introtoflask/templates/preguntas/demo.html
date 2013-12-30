@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
- 
 {% block content %}
+<script> //   $("#contenedor").css('visibility',"hidden") ;</script> 
+
   <h2>DEMO::Cuestion</h2>
 
-    <div id="cuestion" style="border:1px solid red" class="span10">
-        <span style="border:1px solid green;font-size:20px;" class="span9">
-            {{cuestion.texto}}
+    <div id="cuestion" style="border:0px solid red;" class="span10">
+        <span class="span9" style="border:0px solid green;font-size:20px; margin-top:10px;" >
+            {# {% for cues in cuestion %}     #}
+                {{cuestion.texto|safe}} {# Muy importante el filtro safe para trabajar con cadenas de MongoDB #}
+            {# {% endfor %} #}
         </span>
     {# {{}} #}
     {% if cuestion.imagen %}
@@ -77,6 +80,12 @@ $("input[type=radio]:selected").each(function() {
     respuesta.append(data)
 })
 JSON.stringify(respuesta)
-console.log(respuesta)
+console.log("respuesta")
+// MathJax.Hub.Queue(function () {
+//         ["Typeset",MathJax.Hub],
+//     $("#contenedor").css('visibility',"visible") ;
+//   });
+
+// MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 </script>
 {% endblock %} 

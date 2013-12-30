@@ -43,7 +43,7 @@ def demo2():
 	respuesta2 = Respuesta(texto='respuesta de prueba 2',valor=100)
 	respuesta3 = Respuesta(texto='\(\sqrt{3x-1}+(1+x)^2\)',valor=50)
 	# cuestion = Cuestion(texto="\left [ - \frac{\hbar^2}{2 m} \frac{\partial^2}{\partial x^2} + V \right ] \Psi = i \hbar \frac{\partial}{\partial t} \Psi",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
-	cuestion = Cuestion(texto="La cuestión puede contener ecuaciones escritas en LaTeX <code> \( \\frac{3x-1}{(1+x)^3}^2 \) </code>dentro del enunciado.<br/> <code><br/></code>Igualmente se puede introducir ecuaciones eimagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
+	cuestion = Cuestion(texto=u"Enunciado con ecuaciones e imagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$ La cuestión puede contener ecuaciones escritas en LaTeX \( \\frac{3x-1}{(1+x)^3}^2 \) dentro del enunciado.<br/>",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
 	cuestion.imagen="static/img/glyphicons-halflings.png"
 	return render_template('preguntas/demo.html', usuarios=usuario, grupos=grupos, cuestion=cuestion)
 

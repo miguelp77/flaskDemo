@@ -10,36 +10,45 @@
   <!--  
 
   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js">
-    <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX", "output/HTML-CSS"],
-    tex2jax: {
-      skipTags: ["script","noscript","style","textarea","pre","code"],
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-      processEscapes: true
-    },
-    "HTML-CSS": { availableFonts: ["TeX"] }
-  });
-  </script>
    
   <script type="text/javascript"
      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js">
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     </script>
--->
 <script type="text/x-mathjax-config">
   //
   //  The document is hidden until MathJax is finished, then
   //   this function runs, making it visible again.
   //
-  MathJax.Hub.Queue(function () {
+   MathJax.Hub.Queue(function () {
     document.getElementById("hide_page").style.visibility = "";
   });
+
 </script>
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full"></script>
+    <script type="text/x-mathjax-config">
+  //     MathJax.Hub.Queue(function () {
+  //   document.getElementById("contenedor").style.visibility = "";
+  // });
+    MathJax.Hub.Config({
+      "HTML-CSS": { linebreaks: { automatic: true } },
+      SVG: { linebreaks: { automatic: true } },
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+  //     // ignoreClass: "span9",
+        processEscapes: true,
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        skipTags: ["script","noscript","style","textarea","pre","code"],
+        processEnvironments: false
+    },
+    "HTML-CSS": { availableFonts: ["TeX"] }
 
+  });
+  </script>
+   <script type="text/javascript" src="{{ url_for('static', filename='js/mathjax/MathJax.js') }}"></script>
+-->
 
 
   <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
@@ -65,10 +74,21 @@
     </div>
   </header>
      
-    <div class="container">
-      {% block content %}
-      {% endblock %}
-    </div>
+     <div id="contenedor">
+      <div class="container">
+        {% block content %}
+        {% endblock %}
+      </div>
+     </div>
 
   </body>
+  <script>
+  // MathJax.Hub.Queue(["Typeset",MathJax.Hub,"MathExample"]);
+  // test
+(function() {
+    var script = document.createElement("script");
+    script.src = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.head.appendChild(script);
+}());
+  </script>
 </html>

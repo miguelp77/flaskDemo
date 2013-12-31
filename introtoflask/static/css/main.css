@@ -172,3 +172,10 @@ form input#submit:hover{
   padding: 10px;
   width: 400px;
 }
+/* Cortina de las cuestiones */
+#cortina{
+  background: url("../img/loader.gif") rgba(255,255,255,0.8) no-repeat center center;
+}
+#contenedor{
+  visibility: hidden;
+}

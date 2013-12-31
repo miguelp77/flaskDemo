@@ -1,25 +1,28 @@
 {% extends "layout.html" %}
 {% block content %}
-<script> //   $("#contenedor").css('visibility',"hidden") ;</script> 
+<script> 
+    // $("#contenedor").css('visibility','hidden');
+    // $("#cortina").css('background','url("static/img/loader.gif") rgba(255,255,255,0.8) no-repeat center center');
+</script> 
 
-  <h2>DEMO::Cuestion</h2>
+<h2>DEMO::Cuestion</h2>
 
-    <div id="cuestion" style="border:0px solid red;" class="span10">
-        <span class="span9" style="border:0px solid green;font-size:20px; margin-top:10px;" >
+    <div id="cuestion" style="border:1px solid red;" class="span14">
+        <span class="span9" style="border:0px solid green;font-size:16px; margin-top:10px;" >
             {# {% for cues in cuestion %}     #}
                 {{cuestion.texto|safe}} {# Muy importante el filtro safe para trabajar con cadenas de MongoDB #}
             {# {% endfor %} #}
         </span>
     {# {{}} #}
     {% if cuestion.imagen %}
-    <div id="span6" style="border:1px solid green;font-size:20px;">
-        <span class="span6" style="border:1px solid blue;margin-top:14px;">
+    {# <div id="span6" style="border:0px solid green;margin-top:14px;"> #}
+        <span class="span6 offset1" style="border:0px solid blue;margin-top:22px;">
             <img src="{{cuestion.imagen}}" alt="">
-        <label style="margin-top:14px;" class="label label-info">
+        <label style="margin-top:16px" class="label label-info">
             fig. {{cuestion.id}}.1
         </label>
         </span>
-    </div>
+    {# </div> #}
     {%endif%}
 
 {%for respuesta in cuestion.respuesta%}
@@ -41,11 +44,12 @@
 {# {{respuesta.valor}}  
 {{respuesta.texto}}
  #}
-<br>
+    {%if login.perfil == '3' %}
+        <br>
         <span style="border:1px solid green" class="span2 right">  
             Creada por: <b>{{usuarios.nombre}}</b>
         </span>
-
+    {%endif%}
     </div>
 <script>
 
@@ -71,21 +75,32 @@
 })(jQuery);
 
 $('ul.respuestas').shuffle();
+// $('input[type=radio]:checked').val()
+ $( document ).ready(function() {
 var respuesta = []
-$("input[type=radio]:selected").each(function() {
-    // respuesta.push([$(this).attr("name"):$(this).attr("value")])
-    data={name:$(this).attr("name"),
-        select:$(this).attr("value")
+// $("input[type=radio]:selected").each(function() {
+$("input[type=radio]:checked").each(function() {
+    data={
+        select:$(this).attr("value"),
+        name:$(this).attr("name")
         }
+    console.log(data)
     respuesta.append(data)
 })
-JSON.stringify(respuesta)
-console.log("respuesta")
-// MathJax.Hub.Queue(function () {
-//         ["Typeset",MathJax.Hub],
-//     $("#contenedor").css('visibility',"visible") ;
-//   });
 
-// MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+JSON.stringify(respuesta)
+console.log(respuesta)
+
+$( "input[type=radio]" ).on( "click", function() {
+console.log(respuesta)
+});
+
+
+});
+MathJax.Hub.Queue(function () {
+        ["Typeset",MathJax.Hub],
+    $("#contenedor").css('visibility','visible');
+    $("#cortina").css('visibility',"visible").css('background','#fff') ;
+  });
 </script>
 {% endblock %} 

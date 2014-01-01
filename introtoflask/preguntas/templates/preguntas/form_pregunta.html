@@ -1,14 +1,10 @@
 {% extends "layout_pregunta.html" %}
 {% block content %}
 
-<h2>Cuestion</h2>
- <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left"></span>
-  </a>
-  <a class="right carousel-control" href="#myCarousel" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right"></span>
-  </a>
-<i class="glyphicon glyphicon-chevron-left">a</i>
+<h3>Cuestion</h3>
+ <a class="left carousel-control" href="#myCarousel" data-slide="prev" title="Anterior"></a>
+  <a class="right carousel-control" href="#myCarousel" data-slide="next" title="Vista previa"></a>
+
 <hr>
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
 
@@ -57,7 +53,10 @@
 
         <div class="item">
               <div id="preview" class="span12">
-                {{ form.descripcion.data }}
+                <span class="span8" id="descripcion_p"></span>
+                <span class="span8" id="enunciado_p"></span>
+                <span class="span8" id="respuesta"></span>
+
             </div>
             <div class="carousel-caption">
                 Vista previa
@@ -85,5 +84,18 @@ $('.carousel-control.left').click(function() {
 $('.carousel-control.right').click(function() {
   $('#myCarousel').carousel('next');
 });
+
+$('#descripcion').keyup(function() {
+    var v = $(this).val()
+    $('#descripcion_p').append("").text(v)
+    console.log(v)
+    MathJax.Hub.Typeset();
+})
+$('textarea#enunciado').keyup(function() {
+    var v = $(this).val()
+    $('#enunciado_p').append("").text(v)
+    console.log(v)
+    MathJax.Hub.Typeset();
+})
 </script>
 {% endblock %} 

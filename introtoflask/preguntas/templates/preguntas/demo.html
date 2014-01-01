@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout_pregunta.html" %}
 {% block content %}
 <script> 
     // $("#contenedor").css('visibility','hidden');
@@ -8,6 +8,20 @@
 <h2>DEMO::Cuestion</h2>
 
     <div id="cuestion" style="border:1px solid red;" class="span14">
+    {%if login.perfil == '3' %}
+        <br>
+        <span style="border-top:1px solid green" class="span8">  
+            <b>{{cuestion.descripcion}}</b>
+        </span>
+        <span style="border-top:1px solid green" class="span3">  
+            <b>Creada por: {{cuestion.creada_por}}</b>
+        </span>
+        <span style="border-top:1px solid green" class="span3 offset8">  
+            {% for concepto in cuestion.conceptos %}
+            <label class="label label-info">{{concepto}} x</label>
+            {% endfor %}
+        </span>
+    {%endif%}
         <span class="span9" style="border:0px solid green;font-size:16px; margin-top:10px;" >
             {# {% for cues in cuestion %}     #}
                 {{cuestion.texto|safe}} {# Muy importante el filtro safe para trabajar con cadenas de MongoDB #}
@@ -44,12 +58,6 @@
 {# {{respuesta.valor}}  
 {{respuesta.texto}}
  #}
-    {%if login.perfil == '3' %}
-        <br>
-        <span style="border:1px solid green" class="span2 right">  
-            Creada por: <b>{{usuarios.nombre}}</b>
-        </span>
-    {%endif%}
     </div>
 <script>
 

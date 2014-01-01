@@ -1,0 +1,89 @@
+{% extends "layout_pregunta.html" %}
+{% block content %}
+
+<h2>Cuestion</h2>
+ <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+<i class="glyphicon glyphicon-chevron-left">a</i>
+<hr>
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+    <div class="carousel-inner">
+        <div class="active item">
+            <div id="pregunta" class="span12">  
+                <form action="{{ form_action }}" method=post>
+                  {# <form action="#" method=post> #}
+                    <span id="nombre" class="span4">
+                        {{ form.descripcion.label }}
+                        {{ form.descripcion }}
+                    </span>
+                    <span id="enunciado" class="span10">
+                        {{ form.enunciado.label }}
+                        {{ form.enunciado(rows="3", cols="80") }}
+                    </span>
+                    <span id="imagen" class="span4">
+                        {{ form.imagen_principal.label }}
+                        {{ form.imagen_principal }}
+                    </span>
+                    <span id="imagen_aux" class="span4">
+                        {{ form.imagen_secundaria.label }}
+                        {{ form.imagen_secundaria }}
+                    </span>
+                    <span id="respuesta" class="span12">
+                        {% for res in form.respuestas %}
+                            <span class="span8 respuesta">
+                                {{ res.texto.label }} 
+                                {{ res.texto }}
+                            </span>        
+                            <span class="span1 valor">
+                                {{ res.valor.label }} 
+                                {{ res.valor }}
+                            </span>        
+                        {% endfor %}
+                    </span>
+                    <span id="submit" class="span4">
+                        {{ form.submit }}
+                    </span>
+                </form>
+            </div>
+            <div class="carousel-caption">
+                Formulario
+            </div>
+        </div>
+
+        <div class="item">
+              <div id="preview" class="span12">
+                {{ form.descripcion.data }}
+            </div>
+            <div class="carousel-caption">
+                Vista previa
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{# Javascript #}
+<script>
+    $("#contenedor").css('visibility','visible');
+    $("#cortina").css('visibility',"visible").css('background','#fff');
+
+$(function(){
+    $("#myCarousel").carousel({
+         interval : false,
+         // pause: false
+    });
+});
+$('.carousel-control.left').click(function() {
+  $('#myCarousel').carousel('prev');
+});
+
+$('.carousel-control.right').click(function() {
+  $('#myCarousel').carousel('next');
+});
+</script>
+{% endblock %} 

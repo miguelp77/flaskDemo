@@ -78,9 +78,11 @@ class Respuesta(db.EmbeddedDocument):
 # Respuesta.mas_id.set_next_value(0)
 
 class Cuestion(db.Document):
-    cuestion_id = db.IntField()
+    cuestion_id = db.SequenceField(required=True)
     texto = db.StringField(required=True, unique=True)
     imagen = db.StringField(max_length=255)
     imagen_aux = db.StringField(max_length=255)
     respuesta = db.ListField(db.EmbeddedDocumentField('Respuesta'))
-    conceptos = db.ListField(db.StringField())    
+    conceptos = db.ListField(db.StringField())
+    creada_por = db.StringField(max_length=100)
+    descripcion = db.StringField(max_length=255)

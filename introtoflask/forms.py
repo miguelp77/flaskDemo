@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form
 
-from wtforms import TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField, SelectField
+from wtforms import TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField, SelectField, FieldList, FormField
 from wtforms.validators import Required
 
 from introtoflask.models import Usuario
 from introtoflask.models import Grupo
+
 from mongoengine import *
 
 
@@ -50,20 +51,22 @@ class GroupForm(Form):
 	horario = TextField("Horario", [validators.Required("Por favor, introduzca el horario.")])
 	submit = SubmitField("Enviar")
 
-class ContactForm_BAK(Form):
-	name = TextField("Nombre", [validators.Required("Por favor, introduzca un nombre.")])
-	surname = TextField("Apellido", [validators.Required("Por favor, introduzca un apellido.")])
-	email = TextField("Email", [validators.Required("Please enter your email address."), validators.Email("Please enter your email address.")])
-	username = TextField("Usuario", [validators.Required("Por favor, introduzca un nombre de usuario.")])
-	password = TextField(u'Contraseña', [validators.Required("Por favor, introduzca un apellido.")])
-	subject = TextField("Subject", [validators.Required("Please enter a subject.")])
-	message = TextAreaField("Message", [validators.Required("Please enter a message.")])
-	submit = SubmitField("Send")
+class AnswerForm(Form):
+	texto = TextField("Respuesta")
+	valor = TextField("Valor")
 
-class Cuestion(Form):
-	name = TextField("Nombre")
-	enunciado = TextField("Enunciado", [validators.Required("Por favor, introduzca un enunciado.")])
+	def __init__(self, *args, **kwargs):
+		kwargs['csrf_enabled'] = False
+		super(AnswerForm, self).__init__(*args, **kwargs)
+
+class QuestForm(Form):
+	descripcion = TextField(u"Descripción")
+	enunciado = TextAreaField("Enunciado", [validators.Required("Por favor, introduzca un enunciado.")])
 	imagen_principal = TextField("Imagen Principal")
 	imagen_secundaria = TextField("Imagen Secundaria")
-	respuesta = TextField(u'respuesta', [validators.Required("Por favor, introduzca una respuesta.")])
+	respuestas = FieldList(FormField(AnswerForm), min_entries = 2)
 	submit = SubmitField("Enviar")
+
+	def __init__(self, *args, **kwargs):
+		kwargs['csrf_enabled'] = False
+		super(QuestForm, self).__init__(*args, **kwargs)

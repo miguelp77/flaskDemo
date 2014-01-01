@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from introtoflask import app, lm, principals
-from flask import Flask, current_app, render_template, request, flash, redirect, url_for, Blueprint, url_for, session, escape, jsonify
-from forms import ContactForm, LoginForm, GroupForm
+from flask import Flask, current_app, render_template, request, flash, redirect, url_for, Blueprint, session, escape, jsonify
+from forms import ContactForm, LoginForm, GroupForm, QuestForm, AnswerForm
 
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.principal import Principal, Permission, RoleNeed, Identity, identity_changed, AnonymousIdentity, identity_loaded, UserNeed
@@ -17,14 +17,18 @@ from mongoengine import *
 
 from werkzeug.datastructures import MultiDict
 
+preguntas_ops = Blueprint('preguntas', __name__, template_folder='preguntas/templates/preguntas/')
 
-preguntas_ops = Blueprint('preguntas', __name__, template_folder='templates/preguntas')
+admin_role = RoleNeed(u'Administrador')
+admin_permission = Permission(admin_role)
 
-@app.route('/cuestion')
-# class ListView(MethodView):
-def seeCuestion():
-	usuarios = Usuario.objects.all()
-	return render_template('usuarios/list.html', usuarios=usuarios)
+
+
+# @app.route('/cuestion')
+# # class ListView(MethodView):
+# def seeCuestion():
+# 	usuarios = Usuario.objects.all()
+# 	return render_template('usuarios/list.html', usuarios=usuarios)
 
 @app.route('/demo2')
 # class ListView(MethodView):
@@ -34,8 +38,6 @@ def demo2():
 	grupos = [('nombre','eeeee'),('horario','eeeee')]
 	usuario = Usuario.objects.get(username='usuario')
 	
-
-
 	Respuesta.mas_id.set_next_value(0)
 
 	respuesta = Respuesta(texto='respuesta de prueba',valor=-33)
@@ -44,63 +46,51 @@ def demo2():
 	respuesta2 = Respuesta(texto='respuesta de prueba 2',valor=100)
 	respuesta3 = Respuesta(texto='\(\sqrt{3x-1}+(1+x)^2\)',valor=50)
 	# cuestion = Cuestion(texto="\left [ - \frac{\hbar^2}{2 m} \frac{\partial^2}{\partial x^2} + V \right ] \Psi = i \hbar \frac{\partial}{\partial t} \Psi",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
-	cuestion = Cuestion(texto=u"Enunciado con ecuaciones e imagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$ La cuestión puede contener ecuaciones escritas en LaTeX \( \\frac{3x-1}{(1+x)^3}^2 \) dentro del enunciado.<br/>",respuesta=[respuesta,respuesta2,respuesta3,respuesta4],conceptos=['demo'])
+	cuestion = Cuestion(texto=u"Enunciado con ecuaciones e imagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$ La cuestión puede contener ecuaciones escritas en LaTeX \( \frac{3x-1}{(1+x)^3}^2 \) dentro del enunciado.<br/>",respuesta=[respuesta,respuesta2,respuesta3,respuesta4],conceptos=['demo'])
 	cuestion.imagen="static/img/glyphicons-halflings.png"
 	return render_template('preguntas/demo.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
 
 
+@app.route('/cuestion', methods=['GET', 'POST'])
+@admin_permission.require(http_exception=403)
+def edit_question():
+	cuestion = Cuestion.objects.all()
+	usuario= current_user
+	grupos = [('nombre','eeeee'),('horario','eeeee')]
+	# form = QuestForm(request.form,user_json)
+	# form_respuesta = AnswerForm(request.form, cuestion)
+	form_respuesta = "AnswerForm(request.form, Respuesta)"
+	form = QuestForm(request.form, cuestion)
+	if request.method == 'POST':
+		if form.validate() == False:
+			flash('All fields are required.')
+			print form.errors
+			return render_template('form_pregunta.html', form=form, action="EditarPOST")
+		else:
+			if form.submit.data:
+				r_len = len(form.respuestas.data) - 1
+				if len(form.respuestas[r_len].texto.data) > 1:
+					form.respuestas.append_entry(u'default')
+					return render_template('form_pregunta.html', form=form, action="EditarPOST")
+				else:
 
-# @app.route('/details/<slug>/')
-# @login_required
-# def get_details(slug):
-# 	usuarios = list(Usuario.objects(nombre=slug))
-# 	grupos = list(Grupo.objects.all())
-# 	perfil =your_perfil([int(usuarios[0].perfil)])
-# 	login = current_user
-# 	size = getGroupSize()
-# 	return render_template('usuarios/details.html', slug=slug, login =login , usuarios=usuarios, perfiles=perfil, grupos=grupos, size=size)
+			# print len(form.respuestas.data)
+			# for res in form.respuestas.data:
+			# 	print res['texto'] + " - " + res['valor']
+			# return form.respuestas[0].texto.data
+			# cuestion = Cuestion(texto=form.enunciado.data,respuesta=[respuesta1,respuesta2],conceptos=['demo'])
+					cuestion = Cuestion(texto=form.enunciado.data, conceptos=['demo','test'])
+					cuestion.creada_por=get_username(current_user)
+					for r in form.respuestas.data:
+						respuesta_n = Respuesta(texto=r['texto'],valor=r['valor'])
+						cuestion.respuesta.append(respuesta_n)
 
-# @app.route('/contact', methods=['GET', 'POST'])
-# def contact():
-# 	form = ContactForm()
-# 	if request.method == 'POST':
-# 		if form.validate() == False:
-# 			flash('All fields are required.')
-# 			return render_template('contact.html', form=form, action="Add")
-# 		else:
-# 			usuario =Usuario(nombre=form.nombre.data,apellido=form.apellido.data  ,username=form.username.data, password=form.password.data,perfil=form.perfil.data) # Insert
-# 			usuario.save()
-# 			return form.nombre.data + " " +form.apellido.data +" ha sido dado de alta"
-#  	elif request.method == 'GET':
-# 		return render_template('contact.html', form=form, action="Alta")
-
-# @app.route('/contact/<username>', methods=['GET', 'POST'])
-# @admin_permission.require(http_exception=403)
-# def edit_contact(username):
-# 	usuario = Usuario.objects.get(username=username)
-# 	user_json=usuario
-# 	uuu = [{'nombre':'nombre','username':'username'}]
-# 	post = Usuario.objects.get_or_404(username=username)
-# 	form = ContactForm(request.form,user_json)
-# 	if request.method == 'POST':
-# 		if form.validate() == False:
-# 			flash('All fields are required.')
-# 			return render_template('contact.html', form=form, data_type="Usuarios", action="Editar")
-# 		else:
-# 			usuario.nombre=form.nombre.data
-# 			usuario.username=form.username.data
-# 			usuario.password=form.password.data
-# 			usuario.perfil=form.perfil.data
-# 			# usuario.grupos=[{'nombre':'test1','horario':'LLLLLLL'}]
-# 			usuario.save()
-# 			# Usuario(nombre=form.nombre.data,apellido=form.lastname.data  ,username=form.username.data, password=form.password.data,perfil=form.perfil.data).save() # Insert
-# 			# return form.nombre.data + " " +form.username.data 
-# 			return list_users() 
+			# respuesta1 = Respuesta(texto=form.respuestas[0].texto.data, valor=form.respuestas[0].valor.data )
+			# respuesta2 = Respuesta(texto=form.respuestas[1].texto.data, valor=form.respuestas[1].valor.data )
+					return render_template('demo.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
  
-# 	elif request.method == 'GET':
-# 		print 'GET'
-# 		print form.errors	
-# 		return render_template('contact.html', form=form, data_type="usuarios", action="Editar")
+	elif request.method == 'GET':
+		return render_template('form_pregunta.html', form=form, form2=form_respuesta, action="Editar")
 
 
 # @app.route('/grupos/<grupo>', methods=['GET', 'POST'])
@@ -205,4 +195,7 @@ def demo2():
 # def page_not_found(e):
 # 	return render_template('admin/403.html'), 403
 
+def get_username(id):
+	usuario = Usuario.objects.get(id=id)
+	return usuario.username
 

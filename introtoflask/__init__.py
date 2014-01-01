@@ -33,7 +33,7 @@ app.debug=True
 
 
 db = MongoEngine(app)
-# tool = DebugToolbarExtension(app)
+tool = DebugToolbarExtension(app)
 
 
 principals = Principal(app)

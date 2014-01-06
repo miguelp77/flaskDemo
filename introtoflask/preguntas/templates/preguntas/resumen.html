@@ -4,10 +4,11 @@
     // $("#contenedor").css('visibility','hidden');
     // $("#cortina").css('background','url("static/img/loader.gif") rgba(255,255,255,0.8) no-repeat center center');
 </script> 
-{{cuestion.imagen}}
+
 <h2>PREGUNTA::Cuestion</h2>
 
     <div id="cuestion" style="border:1px solid red;" class="span14">
+    {% if login %}
     {%if login.perfil == '3' %}
         <br>
         <span style="border-top:1px solid green" class="span8">  
@@ -22,6 +23,8 @@
             {% endfor %}
         </span>
     {%endif%}
+    {%endif%}
+ 
         <span class="span9" style="border:1px solid green;font-size:16px; margin-top:10px;" >
             {# {% for cues in cuestion %}     #}
                 {{cuestion.texto|safe}} {# Muy importante el filtro safe para trabajar con cadenas de MongoDB #}
@@ -30,15 +33,47 @@
     {# {{}} #}
     {% if cuestion.imagen %}
     {# <div id="span6" style="border:0px solid green;margin-top:14px;"> #}
-        <span class="span6 offset1" style="border:0px solid blue;margin-top:22px;">
-            <img src="{{cuestion.imagen}}" alt="">
+        {% set STATIC = url_for('static', filename='').split('?')[0] %}
+        {% set imagen = cuestion.imagen.split('/')[2] %}
+        {% set thumb = imagen|thumbnail('200x200') %}
+        <span id="launcher-{{short_id}}" class="span4 offset1" style="border:1px dotted red;margin-top:22px;">
+            <img src="{{cuestion.imagen}}" alt="{{cuestion.imagen}}">
         <label style="margin-top:16px" class="label label-info">
-            fig. {{cuestion.id}}.1
+            fig. {{cuestion.short_id}}.1
         </label>
         </span>
+
+        <div id="modal-background-{{short_id}}"></div>
+        <div id="modal-content-{{short_id}}">
+            <img src="{{cuestion.imagen}}" alt="">
+            <label style="margin-top:16px" class="label label-info">
+                fig. {{cuestion.short_id}}.1
+            </label>
+        </div>
     {# </div> #}
     {%endif%}
+    {% if cuestion.imagen_aux %}
+    {# <div id="span6" style="border:0px solid green;margin-top:14px;"> #}
+        {% set STATIC = url_for('static', filename='').split('?')[0] %}
+        {% set imagen = cuestion.imagen_aux.split('/')[2] %}
+        {% set thumb = imagen|thumbnail('300x300') %}
 
+        <span id="launcher-{{short_id}}-aux" class="span4 offset1" style="border:1px dotted red;margin-top:22px;">
+            <img src="{{thumb}}" alt="{{cuestion.imagen_aux}}">
+        <label style="margin-top:16px" class="label label-info">
+            fig. {{cuestion.short_id}}.2
+        </label>
+        </span>
+
+        <div id="modal-background-aux-{{short_id}}-aux"></div>
+        <div id="modal-content-aux-{{short_id}}-aux">
+            <img src="{{cuestion.imagen_aux}}" alt="">
+            <label style="margin-top:16px" class="label label-info">
+                fig. {{cuestion.short_id}}.2
+            </label>
+        </div>
+    
+    {%endif%}
 {%for respuesta in cuestion.respuesta%}
 
     <ul class="span6 respuestas" style="margin-top:18px;">
@@ -110,5 +145,23 @@ MathJax.Hub.Queue(function () {
     $("#contenedor").css('visibility','visible');
     $("#cortina").css('visibility',"visible").css('background','#fff') ;
   });
+
+// $('img').on( "click", function() {
+//         var that = $(this);
+//         var newSrc = that.attr('alt')
+//         $('#full').empty();
+        
+//         $('#full').append('<img src="' + newSrc + '"">');
+//         console.log('<img src="' + newSrc + '>"')
+//     });
+// $('#full').on( "click", function() {
+//         $('#full').empty();
+//     });
+$(function(){
+    $("div[id*='launcher-'], div[id*='modal-background-'], div[id*='modal-close-'], img").click(function () {
+        $("div[id*='modal-content'],div[id*='modal-background']").toggleClass("active");
+    });
+});
+
 </script>
 {% endblock %} 

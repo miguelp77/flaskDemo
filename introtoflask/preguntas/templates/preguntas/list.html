@@ -1,0 +1,157 @@
+{% extends "layout_pregunta.html" %}
+{% block content %}
+<script> 
+    // $("#contenedor").css('visibility','hidden');
+    // $("#cortina").css('background','url("static/img/loader.gif") rgba(255,255,255,0.8) no-repeat center center');
+</script> 
+
+<h2>PREGUNTA::Cuestion</h2>
+{% for cuestion in cuestiones %}
+    <div id="cuestion-{{cuestion.short_id}}" style="border-top:1px solid #444;" class="span14">
+    {% if login %}
+    {%if login.perfil == '3' %}
+        <br>
+        <span style="border-top:0px solid green" class="span8">  
+            <b>{{cuestion.descripcion}}</b>
+        </span>
+        <span style="border-top:0px solid green" class="span3">  
+            <b>Creada por: {{cuestion.creada_por}}</b>
+        </span>
+        <span style="border-top:0px solid green" class="span3 offset8">  
+            {% for concepto in cuestion.conceptos %}
+            <label class="label label-info">{{concepto}} x</label>
+            {% endfor %}
+        </span>
+    {%endif%}
+    {%endif%}
+ 
+        <span class="span9" style="border:0px solid green;font-size:16px; margin-top:10px;" >
+            {# {% for cues in cuestion %}     #}
+                {{cuestion.texto|safe}} {# Muy importante el filtro safe para trabajar con cadenas de MongoDB #}
+            {# {% endfor %} #}
+        </span>
+    {# {{}} #}
+    {% if cuestion.imagen %}
+    {# <div id="span6" style="border:0px solid green;margin-top:14px;"> #}
+        {% set STATIC = url_for('static', filename='').split('?')[0] %}
+        {% set imagen = cuestion.imagen.split('/')[2] %}
+        {% set thumb = imagen|thumbnail('200x200') %}
+        <span id="launcher-{{cuestion.short_id}}" class="span4 offset1" style="border:0px dotted red;margin-top:22px;">
+            <img src="{{cuestion.imagen}}" alt="{{cuestion.imagen}}" class="launcher-{{cuestion.short_id}}">
+        <label style="margin-top:16px" class="label label-info">
+            fig. {{cuestion.short_id}}.1
+        </label>
+        </span>
+
+        <div id="modal-background-{{cuestion.short_id}}"></div>
+        <div id="modal-content-{{cuestion.short_id}}">
+            <img src="{{cuestion.imagen}}" alt="" class="content">
+            <label style="margin-top:16px" class="label label-info">
+                fig. {{cuestion.short_id}}.1
+            </label>
+        </div>
+
+    {%endif%}
+    {% if cuestion.imagen_aux %}
+
+        {% set STATIC = url_for('static', filename='').split('?')[0] %}
+        {% set imagen = cuestion.imagen_aux.split('/')[2] %}
+        {% set thumb = imagen|thumbnail('300x300') %}
+
+        <span id="launcher-{{cuestion.short_id}}aux" class="span4 offset1" style="border:0px dotted red;margin-top:22px;">
+            <img src="{{thumb}}" alt="{{cuestion.imagen_aux}}">
+            <label style="margin-top:16px" class="label label-info">
+                fig. {{cuestion.short_id}}.2
+            </label>
+        </span>
+
+        <div id="modal-background-{{cuestion.short_id}}aux"></div>
+        <div id="modal-content-{{cuestion.short_id}}aux">
+            <img src="{{cuestion.imagen_aux}}" alt="" class="content">
+            <label style="margin-top:16px" class="label label-info">
+                fig. {{cuestion.short_id}}.2
+            </label>
+        </div>
+    
+    {%endif%}
+    {%for respuesta in cuestion.respuesta%}
+
+        <ul class="span6 respuestas" style="margin-top:18px;">
+        <li class="span6" style="list-style-type:none;">
+        <div class="input-group">
+            <div class="input-group-addon">
+                <input type="radio" name="{{cuestion.id}}" class="radio" value="{{respuesta.mas_id}}">
+                {{respuesta.mas_id}} {{respuesta.texto}} Con valor: {{respuesta.valor}} {# : {{cuestion.id}} #} 
+            </div>
+        </div>
+        </li>
+        </ul>
+
+    {%endfor%}
+    </div>
+    
+{%endfor%}
+
+<script>
+// SIN Shuffle
+// (function($){
+//     $.fn.shuffle = function() {
+//         var allElems = this.get(),
+//             getRandom = function(max) {
+//                 return Math.floor(Math.random() * max);
+//             },
+//             shuffled = $.map(allElems, function(){
+//                 var random = getRandom(allElems.length),
+//                     randEl = $(allElems[random]).clone(true)[0];
+//                 allElems.splice(random, 1);
+//                 return randEl;
+//             });
+ 
+//         this.each(function(i){
+//             $(this).replaceWith($(shuffled[i]));
+//         });
+ 
+//         return $(shuffled);
+//     };
+// })(jQuery);
+// $('ul.respuestas').shuffle();
+
+$( document ).ready(function() {
+    var respuesta = []
+    $("input[type=radio]:checked").each(function() {
+        data={
+            select:$(this).attr("value"),
+            name:$(this).attr("name")
+        }
+        console.log(data)
+        respuesta.append(data)
+    })
+
+    JSON.stringify(respuesta)
+    console.log(respuesta)
+
+    $( "input[type=radio]" ).on( "click", function() {
+        console.log(respuesta)
+    });
+// Ventana modal para el zoom de las imagenes
+    $(function(){
+        $("span[id^='launcher'], div[id^='modal-content'],div[id^='modal-background']").click(function () {
+            var that = $(this)
+            ids=that.attr('id').split('-')
+            id=ids[ids.length-1]
+            console.log(id)
+            $("div[id='modal-content-"+id+"'],div[id='modal-background-"+id+"']").toggleClass("active");
+        });
+    });
+
+});
+
+MathJax.Hub.Queue(function () {
+        ["Typeset",MathJax.Hub],
+    $("#contenedor").css('visibility','visible');
+    $("#cortina").css('visibility',"visible").css('background','#fff') ;
+  });
+
+
+</script>
+{% endblock %} 

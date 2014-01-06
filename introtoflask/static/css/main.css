@@ -177,7 +177,7 @@ form input#submit:hover{
   background: url("../img/loader.gif") rgba(255,255,255,0.8) no-repeat center center;
 }
 #contenedor{
-  visibility: hidden;
+  visibility: visible;
 }
 /* Form cuestiones*/
 textarea#enunciado{
@@ -200,3 +200,47 @@ input[id*='-valor']{
   color: #fff;
   position: fixed !important;
 }
+
+/* Modal */
+    div[id*='modal-background-'] {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        opacity: .50;
+        -webkit-opacity: .5;
+        -moz-opacity: .5;
+        filter: alpha(opacity=50);
+        z-index: 1000;
+    }
+    
+    div[id*='modal-content'] {
+        background-color: white;
+        border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        box-shadow: 0 0 20px 0 #222;
+        -webkit-box-shadow: 0 0 20px 0 #222;
+        -moz-box-shadow: 0 0 20px 0 #222;
+        display: none;
+        height: 440px;
+        /*left: 50%;*/
+        margin: -120px 0 0 -160px;
+        padding: 10px;
+        position: absolute;
+        /*position: absolute;*/
+        /*top: 50%;*/
+        width: 600px;
+        z-index: 1000;
+    }
+
+    div[id*='modal-background-'].active, div[id*='modal-content-'].active {
+        display: block;
+    }
+/*
+img.content{
+  position: absolute;
+}*/

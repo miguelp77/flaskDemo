@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 from flask import Flask
+import os
+
 from flask_debugtoolbar import DebugToolbarExtension
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.login import LoginManager
 
 from flask.ext.principal import Principal, Permission, RoleNeed
+
+from flask.ext.thumbnails import Thumbnail
+
+ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/img/pics/')
+THUMBS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/img/pics/media/')
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)     
 
@@ -12,6 +20,9 @@ app.jinja_env.add_extension('jinja2.ext.do')
 
 app.config["MONGODB_SETTINGS"] = {'DB': "myDataBase"}
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
+app.config['MEDIA_FOLDER'] = ASSETS_DIR
+app.config['MEDIA_THUMB'] = THUMBS_DIR
+app.config['MEDIA_URL'] = '/media/'
 
 # app.config["DEBUG_TB_PANELS"] = {'flask.ext.mongoengine.panels.MongoDebugPanel'}
 app.config["DEBUG_TB_PANELS"] = [
@@ -20,7 +31,7 @@ app.config["DEBUG_TB_PANELS"] = [
 	'flask_debugtoolbar.panels.headers.HeaderDebugPanel',
 	'flask_debugtoolbar.panels.request_vars.RequestVarsDebugPanel',
 	'flask_debugtoolbar.panels.template.TemplateDebugPanel',
-	'flask_debugtoolbar.panels.sqlalchemy.SQLAlchemyDebugPanel',
+	# 'flask_debugtoolbar.panels.sqlalchemy.SQLAlchemyDebugPanel',
 	'flask_debugtoolbar.panels.logger.LoggingPanel',
 	'flask_debugtoolbar.panels.profiler.ProfilerDebugPanel',
         # Add the MongoDB panel
@@ -34,6 +45,7 @@ app.debug=True
 
 db = MongoEngine(app)
 tool = DebugToolbarExtension(app)
+thumb = Thumbnail(app)
 
 
 principals = Principal(app)

@@ -7,12 +7,12 @@
 
 <hr>
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
-
     <div class="carousel-inner">
         <div class="active item">
             <div id="pregunta" class="span12">  
-                <form action="{{ form_action }}" method=post>
+{#                 <form action="{{ form_action }}" method=post> #}
                   {# <form action="#" method=post> #}
+                <form method="POST" enctype="multipart/form-data" action="">
                     <span id="nombre" class="span4">
                         {{ form.descripcion.label }}
                         {{ form.descripcion }}
@@ -21,13 +21,13 @@
                         {{ form.enunciado.label }}
                         {{ form.enunciado(rows="3", cols="80") }}
                     </span>
-                    <span id="imagen" class="span4">
-                        {{ form.imagen_principal.label }}
-                        {{ form.imagen_principal }}
+                    <span id="imagen" class="span5">
+                        {{ form.imagen.label }}
+                        {{ form.imagen }}
                     </span>
-                    <span id="imagen_aux" class="span4">
-                        {{ form.imagen_secundaria.label }}
-                        {{ form.imagen_secundaria }}
+                    <span id="imagen_aux" class="span5">
+                        {{ form.imagen_aux.label }}
+                        {{ form.imagen_aux }}
                     </span>
                     <span id="respuesta" class="span12">
                         {% for res in form.respuestas %}
@@ -52,11 +52,11 @@
         </div>
 
         <div class="item">
-              <div id="preview" class="span12">
+            <div id="preview" class="span12">
                 <span class="span8" id="descripcion_p"></span>
                 <span class="span8" id="enunciado_p"></span>
                 <span class="span8" id="respuesta"></span>
-
+                <br>
             </div>
             <div class="carousel-caption">
                 Vista previa

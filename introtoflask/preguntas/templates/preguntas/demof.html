@@ -1,0 +1,23 @@
+{% extends "layout_pregunta.html" %}
+{% block content %}
+
+<h3>Cuestion</h3>
+
+<hr>
+cuestion
+{{cuestion.texto|safe}}
+<img src="{{cuestion.imagen}}" alt="{{cuestion.imagen}}">
+<img src="{{ cuestion.imagen }}" alt="{{cuestion.imagen}}" />
+{% for f in cuestion %}
+    <hr>
+    {{f}}  
+{% endfor %}
+
+{% set STATIC = url_for('static', filename='').split('?')[0] %}
+{% set imagen = cuestion.imagen.split('/')[2] %}
+{% set thumb = imagen|thumbnail('200x200') %}
+
+<img src="{{ thumb }}" />
+{{ STATIC }}
+
+{% endblock %} 

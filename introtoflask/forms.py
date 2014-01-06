@@ -1,28 +1,25 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form
 
+from werkzeug import FileStorage
+
 from wtforms import TextField, TextAreaField, SubmitField, validators, ValidationError, PasswordField, SelectField, FieldList, FormField
+from wtforms.fields import FileField
+# from flask_wtf.file import FileField
 from wtforms.validators import Required
 
-from introtoflask.models import Usuario
-from introtoflask.models import Grupo
+# from introtoflask.models import Usuario
+# from introtoflask.models import Grupo
 
-from mongoengine import *
+# from mongoengine import *
 
 
 class ContactForm(Form):
-	# grupos = Grupo.objects.all()
-	
 	nombre = TextField("Nombre", [validators.Required("Por favor, introduzca un nombre.")])
 	apellido = TextField("Apellido", [validators.Required("Por favor, introduzca un apellido.")])
 	username = TextField("Usuario", [validators.Required("Por favor, introduzca un nombre de usuario.")])
 	password = TextField(u'Contraseña', [validators.Required(u'Por favor, introduzca una Contraseña.')])
-	# perfil = TextField(u'Perfil', [validators.Required("Por favor, introduzca un perfil.")])
 	perfil = SelectField(u'Perfil',choices=[('1', 'Alumno'), ('2', 'Tutor'), ('3', 'Administrador')])
-	# grupo = SelectField(u'Grupo',choices=[(1, "Abc"), (2, "Def")], default=2)
-	# grupos = SelectField(u'Grupo',grupos[0].nombre,coerce=int)
-	# grupos = ReferenceField(Grupo,None)
-
 	submit = SubmitField("Enviar")
 
 class LoginForm(Form):
@@ -59,14 +56,22 @@ class AnswerForm(Form):
 		kwargs['csrf_enabled'] = False
 		super(AnswerForm, self).__init__(*args, **kwargs)
 
+class testForm(Form):
+	description  = TextAreaField(u'Image Description')
+	fileName = FileField(u'Image File','attachment')
+	Enviar = SubmitField('Enviar')
+
 class QuestForm(Form):
 	descripcion = TextField(u"Descripción")
 	enunciado = TextAreaField("Enunciado", [validators.Required("Por favor, introduzca un enunciado.")])
 	imagen_principal = TextField("Imagen Principal")
 	imagen_secundaria = TextField("Imagen Secundaria")
 	respuestas = FieldList(FormField(AnswerForm), min_entries = 2)
+	imagen = FileField(u'Imagen Principal','attachment')
+	imagen_aux = FileField(u'Imagen Secundaria','attachment')
 	submit = SubmitField("Enviar")
 
 	def __init__(self, *args, **kwargs):
 		kwargs['csrf_enabled'] = False
 		super(QuestForm, self).__init__(*args, **kwargs)
+

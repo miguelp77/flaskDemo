@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 from introtoflask import app, lm, principals
-from flask import Flask, current_app, render_template, request, flash, redirect, url_for, Blueprint, session, escape, jsonify
-from forms import ContactForm, LoginForm, GroupForm, QuestForm, AnswerForm
+from flask import Flask, current_app, render_template, request, flash, redirect, url_for, Blueprint, session, escape, jsonify, send_from_directory
+from forms import QuestForm, AnswerForm, testForm
+
+from flask.ext.wtf import Form
 
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.principal import Principal, Permission, RoleNeed, Identity, identity_changed, AnonymousIdentity, identity_loaded, UserNeed
-
-import json 
 from bson import json_util
+import json 
+import os
+
+
+from flask.ext.thumbnails import Thumbnail
 
 from introtoflask.models import Usuario
 from introtoflask.models import Grupo
@@ -16,13 +21,41 @@ from introtoflask.models import Respuesta, Cuestion
 from mongoengine import *
 
 from werkzeug.datastructures import MultiDict
+from werkzeug import secure_filename
 
 preguntas_ops = Blueprint('preguntas', __name__, template_folder='preguntas/templates/preguntas/')
 
 admin_role = RoleNeed(u'Administrador')
 admin_permission = Permission(admin_role)
 
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
+@app.route('/media/<filename>')
+def media_file(filename):
+	return send_from_directory(app.config['MEDIA_THUMBNAIL_FOLDER'], filename)
+
+
+def checkfile(form,field):
+	if field.data:
+		filename=field.data.lower()
+		ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+		if not ('.' in filename and filename.rsplit('.',1)[1] in ALLOWED_EXTENSIONS):
+			raise ValidationError('Wrong Filetype, you can upload only png,jpg,jpeg,gif files')
+		else:
+			raise ValidationError('field not Present') # I added this justfor some debugging
+
+def allowed_file(field):
+	if field.filename:
+		filename=field.filename.lower()
+		print "filename " + filename
+		print str('.' in filename)
+		print str(filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS)
+		print "AMBAS TRUE?"
+		if not ('.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS):
+			raise ValidationError('Wrong Filetype, you can upload only png,jpg,jpeg,gif files')
+		return True
+	else:
+		raise ValidationError(filename + ' field not Present in ' + str(ALLOWED_EXTENSIONS))
 
 # @app.route('/cuestion')
 # # class ListView(MethodView):
@@ -30,25 +63,6 @@ admin_permission = Permission(admin_role)
 # 	usuarios = Usuario.objects.all()
 # 	return render_template('usuarios/list.html', usuarios=usuarios)
 
-@app.route('/demo2')
-# class ListView(MethodView):
-def demo2():
-	# usuarios = Usuario.objects.all()
-
-	grupos = [('nombre','eeeee'),('horario','eeeee')]
-	usuario = Usuario.objects.get(username='usuario')
-	
-	Respuesta.mas_id.set_next_value(0)
-
-	respuesta = Respuesta(texto='respuesta de prueba',valor=-33)
-	respuesta4 = Respuesta(texto='respuesta de prueba 4',valor=-33)
-	# respuesta._reset_already_indexed('mas_id')
-	respuesta2 = Respuesta(texto='respuesta de prueba 2',valor=100)
-	respuesta3 = Respuesta(texto='\(\sqrt{3x-1}+(1+x)^2\)',valor=50)
-	# cuestion = Cuestion(texto="\left [ - \frac{\hbar^2}{2 m} \frac{\partial^2}{\partial x^2} + V \right ] \Psi = i \hbar \frac{\partial}{\partial t} \Psi",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
-	cuestion = Cuestion(texto=u"Enunciado con ecuaciones e imagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$ La cuestión puede contener ecuaciones escritas en LaTeX \( \frac{3x-1}{(1+x)^3}^2 \) dentro del enunciado.<br/>",respuesta=[respuesta,respuesta2,respuesta3,respuesta4],conceptos=['demo'])
-	cuestion.imagen="static/img/glyphicons-halflings.png"
-	return render_template('preguntas/demo.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
 
 
 @app.route('/cuestion', methods=['GET', 'POST'])
@@ -57,40 +71,68 @@ def edit_question():
 	cuestion = Cuestion.objects.all()
 	usuario= current_user
 	grupos = [('nombre','eeeee'),('horario','eeeee')]
-	# form = QuestForm(request.form,user_json)
-	# form_respuesta = AnswerForm(request.form, cuestion)
+
 	form_respuesta = "AnswerForm(request.form, Respuesta)"
-	form = QuestForm(request.form, cuestion)
+	# form = QuestForm(request.form, cuestion)
+	form = QuestForm()
+	form2 = testForm()
 	if request.method == 'POST':
-		if form.validate() == False:
-			flash('All fields are required.')
-			print form.errors
-			return render_template('form_pregunta.html', form=form, action="EditarPOST")
-		else:
+		file = request.files['imagen']
+		file_aux= request.files['imagen_aux']
+		# file = request.form.get('imagen')
+		app.logger.debug(file.filename)
+		# file = request.files['imagen']
+		# print bool(allowed_file(file))
+		if file and allowed_file(file):
+			filename = secure_filename(file.filename)
+			print "FILENAME: " + filename
+			print app.config['MEDIA_FOLDER']
+			print file.save(os.path.join(app.config['MEDIA_FOLDER'], filename))
+			print "FILENAME2: " + filename
 			if form.submit.data:
 				r_len = len(form.respuestas.data) - 1
 				if len(form.respuestas[r_len].texto.data) > 1:
 					form.respuestas.append_entry(u'default')
 					return render_template('form_pregunta.html', form=form, action="EditarPOST")
 				else:
-
-			# print len(form.respuestas.data)
-			# for res in form.respuestas.data:
-			# 	print res['texto'] + " - " + res['valor']
-			# return form.respuestas[0].texto.data
-			# cuestion = Cuestion(texto=form.enunciado.data,respuesta=[respuesta1,respuesta2],conceptos=['demo'])
 					cuestion = Cuestion(texto=form.enunciado.data, conceptos=['demo','test'])
+					cuestion.imagen = app.config['MEDIA_URL'] + file.filename
+					if file_aux and allowed_file(file_aux):
+						cuestion.imagen_aux = app.config['MEDIA_URL'] + file_aux.filename
+					cuestion.creada_por=get_username(current_user)
+					for r in form.respuestas.data:
+						if r['texto']:
+							respuesta_n = Respuesta(texto=r['texto'],valor=int(r['valor']))
+							cuestion.respuesta.append(respuesta_n)
+					cuestion.save()
+					return render_template('resumen.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
+
+		if form.validate == False:
+			print form.errors
+			flash('All fields are required.')
+			return render_template('form_pregunta.html', form=form, action="EditarPOST")
+		else:
+			print form.errors
+			if form.submit.data:
+				r_len = len(form.respuestas.data) - 1
+				if len(form.respuestas[r_len].texto.data) > 1:
+					form.respuestas.append_entry(u'default')
+					return render_template('form_pregunta.html', form=form, action="EditarPOST")
+				else:
+					cuestion = Cuestion(texto=form.enunciado.data, conceptos=['demo','test'])
+					# cuestion.imagen = app.config['MEDIA_URL'] + file.filename
 					cuestion.creada_por=get_username(current_user)
 					for r in form.respuestas.data:
 						respuesta_n = Respuesta(texto=r['texto'],valor=r['valor'])
 						cuestion.respuesta.append(respuesta_n)
-
+						
+					# file = request.files['imagen']
 			# respuesta1 = Respuesta(texto=form.respuestas[0].texto.data, valor=form.respuestas[0].valor.data )
 			# respuesta2 = Respuesta(texto=form.respuestas[1].texto.data, valor=form.respuestas[1].valor.data )
-					return render_template('demo.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
- 
+					return render_template('resumen.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
+
 	elif request.method == 'GET':
-		return render_template('form_pregunta.html', form=form, form2=form_respuesta, action="Editar")
+		return render_template('form_pregunta.html', form=form, action="Editar")
 
 
 # @app.route('/grupos/<grupo>', methods=['GET', 'POST'])
@@ -199,3 +241,42 @@ def get_username(id):
 	usuario = Usuario.objects.get(id=id)
 	return usuario.username
 
+@app.route('/demo2')
+# class ListView(MethodView):
+def demo2():
+	# usuarios = Usuario.objects.all()
+
+	grupos = [('nombre','eeeee'),('horario','eeeee')]
+	usuario = Usuario.objects.get(username='usuario')
+	
+	Respuesta.mas_id.set_next_value(0)
+
+	respuesta = Respuesta(texto='respuesta de prueba',valor=-33)
+	respuesta4 = Respuesta(texto='respuesta de prueba 4',valor=-33)
+	# respuesta._reset_already_indexed('mas_id')
+	respuesta2 = Respuesta(texto='respuesta de prueba 2',valor=100)
+	respuesta3 = Respuesta(texto='\(\sqrt{3x-1}+(1+x)^2\)',valor=50)
+	# cuestion = Cuestion(texto="\left [ - \frac{\hbar^2}{2 m} \frac{\partial^2}{\partial x^2} + V \right ] \Psi = i \hbar \frac{\partial}{\partial t} \Psi",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
+	cuestion = Cuestion(texto=u"Enunciado con ecuaciones e imagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$ La cuestión puede contener ecuaciones escritas en LaTeX \( \frac{3x-1}{(1+x)^3}^2 \) dentro del enunciado.<br/>",respuesta=[respuesta,respuesta2,respuesta3,respuesta4],conceptos=['demo'])
+	cuestion.imagen="static/img/glyphicons-halflings.png"
+	return render_template('demo.html', usuarios=usuario, grupos=grupos, cuestion=cuestion, login=current_user)
+
+@app.route('/demof')
+# class ListView(MethodView):
+def demof():
+	Respuesta.mas_id.set_next_value(0)
+
+	respuesta = Respuesta(texto='respuesta de prueba',valor=-33)
+	respuesta4 = Respuesta(texto='respuesta de prueba 4',valor=-33)
+	# respuesta._reset_already_indexed('mas_id')
+	respuesta2 = Respuesta(texto='respuesta de prueba 2',valor=100)
+	respuesta3 = Respuesta(texto='\(\sqrt{3x-1}+(1+x)^2\)',valor=50)
+	# cuestion = Cuestion(texto="\left [ - \frac{\hbar^2}{2 m} \frac{\partial^2}{\partial x^2} + V \right ] \Psi = i \hbar \frac{\partial}{\partial t} \Psi",respuesta=[respuesta,respuesta2,respuesta3],conceptos=['demo'])
+	cuestion = Cuestion(texto=u"Enunciado con ecuaciones e imagenes de esquemas dentro de la pregunta. $$\int_a^b{x}_{0}dx $$ La cuestión puede contener ecuaciones escritas en LaTeX \( \\frac{3x-1}{(1+x)^3}^2 \) dentro del enunciado.<br/>",respuesta=[respuesta,respuesta2,respuesta3,respuesta4],conceptos=['demo'])
+	cuestion.imagen = app.config['MEDIA_URL'] + 'fff.png'
+	return render_template('demof.html', cuestion=cuestion)
+
+@app.route('/listar')
+def listar():
+	cuestiones = Cuestion.objects.all()
+	return render_template('list.html', cuestiones=cuestiones)	
